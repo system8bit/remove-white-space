@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>★☆ Remove White Space ☆★ | system8bit's Tools</title>
+  <meta name="description" content="テキストから不要なホワイトスペースを削除するツール。">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: "MS PGothic", "MS Gothic", "Osaka", "Hiragino Kaku Gothic Pro", monospace;
+      background-color: #000011;
+      background-image:
+        radial-gradient(1px 1px at 10% 15%, #fff 50%, transparent 100%),
+        radial-gradient(1px 1px at 25% 80%, #ccccff 50%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 50% 10%, #ffffcc 50%, transparent 100%),
+        radial-gradient(1px 1px at 75% 60%, #fff 50%, transparent 100%),
+        radial-gradient(1px 1px at 90% 30%, #ccccff 50%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 15% 50%, #fff 50%, transparent 100%),
+        radial-gradient(1px 1px at 40% 40%, #ffffcc 50%, transparent 100%),
+        radial-gradient(1px 1px at 60% 85%, #fff 50%, transparent 100%),
+        radial-gradient(1px 1px at 85% 90%, #ccccff 50%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 5% 95%, #fff 50%, transparent 100%);
+      background-size: 300px 300px;
+      color: #ffff99;
+      min-height: 100vh;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    a { color: #66ccff; }
+    a:visited { color: #cc99ff; }
+    a:hover { color: #ff99cc; }
+
+    .marquee-container {
+      background: linear-gradient(90deg, #000066, #330066, #000066);
+      border-top: 2px solid #ffcc00;
+      border-bottom: 2px solid #ffcc00;
+      padding: 8px 0;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .marquee-text {
+      display: inline-block;
+      animation: marquee 14s linear infinite;
+      font-size: 18px;
+      font-weight: bold;
+      color: #ffcc00;
+      text-shadow: 0 0 8px #ffcc00, 2px 2px 0 #663300;
+      letter-spacing: 3px;
+    }
+
+    @keyframes marquee {
+      0%   { transform: translateX(100vw); }
+      100% { transform: translateX(-100%); }
+    }
+
+    .title-area {
+      text-align: center;
+      padding: 24px 16px;
+      border-bottom: 2px dashed #336699;
+    }
+
+    .title-area h1 {
+      font-size: 26px;
+      color: #66ffcc;
+      text-shadow: 2px 2px 0 #003333;
+      letter-spacing: 2px;
+    }
+
+    .title-area .subtitle {
+      font-size: 12px;
+      color: #999999;
+      margin-top: 6px;
+    }
+
+    .title-area .back-link {
+      margin-top: 10px;
+      font-size: 12px;
+    }
+
+    .container {
+      max-width: 980px;
+      margin: 20px auto;
+      padding: 20px;
+      border: 3px ridge #336699;
+      background: rgba(10, 10, 46, 0.6);
+    }
+
+    .panel {
+      margin-bottom: 18px;
+    }
+
+    .panel-title {
+      font-size: 14px;
+      color: #ffcc66;
+      border-bottom: 1px dotted #664400;
+      padding-bottom: 4px;
+      margin-bottom: 8px;
+    }
+
+    .panel-title::before {
+      content: "◆ ";
+      color: #ff6699;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 160px;
+      padding: 10px;
+      background: #001122;
+      border: 2px inset #336699;
+      color: #ccffcc;
+      font-family: "Courier New", "MS Gothic", monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      resize: vertical;
+    }
+
+    textarea:focus {
+      outline: 1px dashed #66ccff;
+    }
+
+    textarea[readonly] {
+      background: #001100;
+      color: #00ff99;
+      text-shadow: 0 0 4px rgba(0, 255, 153, 0.4);
+    }
+
+    .options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 6px 14px;
+      padding: 10px 12px;
+      border: 1px dashed #666699;
+      background: #0a0a1a;
+    }
+
+    .option-item {
+      font-size: 13px;
+      color: #cccccc;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .option-item input[type="checkbox"] {
+      accent-color: #ffcc00;
+      cursor: pointer;
+    }
+
+    .option-item:hover {
+      color: #ffcc66;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 16px 0;
+      justify-content: center;
+    }
+
+    button {
+      font-family: "MS PGothic", "MS Gothic", monospace;
+      font-size: 14px;
+      font-weight: bold;
+      padding: 10px 22px;
+      cursor: pointer;
+      background: linear-gradient(180deg, #336699 0%, #1a3a5e 100%);
+      color: #ffffcc;
+      border: 2px outset #6699cc;
+      letter-spacing: 1px;
+    }
+
+    button:hover {
+      background: linear-gradient(180deg, #4488bb 0%, #224477 100%);
+      color: #ffffff;
+    }
+
+    button:active {
+      border: 2px inset #6699cc;
+      background: linear-gradient(180deg, #224477 0%, #4488bb 100%);
+    }
+
+    button.primary {
+      background: linear-gradient(180deg, #cc6600 0%, #993300 100%);
+      border-color: #ffaa44;
+      color: #ffffcc;
+      font-size: 15px;
+      padding: 12px 28px;
+    }
+
+    button.primary:hover {
+      background: linear-gradient(180deg, #ee8822 0%, #bb5500 100%);
+    }
+
+    button.primary:active {
+      background: linear-gradient(180deg, #993300 0%, #cc6600 100%);
+      border: 2px inset #ffaa44;
+    }
+
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 11px;
+      color: #99aacc;
+      margin-top: 4px;
+    }
+
+    .stats .label {
+      color: #ffcc66;
+    }
+
+    .stats .num {
+      color: #00ff66;
+      font-family: "Courier New", monospace;
+      text-shadow: 0 0 4px rgba(0, 255, 102, 0.5);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #003366;
+      border: 2px ridge #66ccff;
+      padding: 8px 18px;
+      color: #ffffcc;
+      font-size: 13px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      z-index: 100;
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
+
+    .hr-retro {
+      border: none;
+      height: 4px;
+      background: linear-gradient(90deg, transparent, #336699, #6633cc, #336699, transparent);
+      margin: 20px 0;
+    }
+
+    footer {
+      text-align: center;
+      padding: 16px;
+      border-top: 2px dashed #336699;
+      font-size: 11px;
+      color: #666699;
+      margin-top: 20px;
+    }
+
+    footer a {
+      color: #6699cc;
+      font-size: 11px;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        margin: 10px;
+        padding: 12px;
+      }
+      .title-area h1 { font-size: 20px; }
+      .marquee-text { font-size: 14px; }
+      button { font-size: 13px; padding: 8px 16px; }
+      button.primary { font-size: 14px; padding: 10px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="marquee-container">
+    <span class="marquee-text">★☆★ Remove White Space ★☆★ 不要なホワイトスペースをサクッと削除！ ★☆★</span>
+  </div>
+
+  <div class="title-area">
+    <h1>☆ Remove White Space ☆</h1>
+    <div class="subtitle">- テキストから不要なホワイトスペースを削除するツール -</div>
+    <div class="back-link">
+      <a href="https://system8bit.github.io/">&lt;&lt; system8bit's Homepage に戻る</a>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <div class="panel">
+      <div class="panel-title">入力テキスト</div>
+      <textarea id="input" placeholder="ここにテキストを貼り付けてください..." spellcheck="false"></textarea>
+      <div class="stats">
+        <span><span class="label">文字数:</span> <span class="num" id="inputChars">0</span></span>
+        <span><span class="label">行数:</span> <span class="num" id="inputLines">0</span></span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">削除オプション</div>
+      <div class="options">
+        <label class="option-item" title="全行に共通する先頭インデントだけを揃えて削除します（相対的なインデントは保持）"><input type="checkbox" id="optDedent" checked> 共通インデント(オフセット)を削除</label>
+        <label class="option-item"><input type="checkbox" id="optTrailing" checked> 行末の空白を削除</label>
+        <label class="option-item"><input type="checkbox" id="optCollapseSpaces" checked> 連続する空白を1つに</label>
+        <label class="option-item"><input type="checkbox" id="optCollapseBlankLines" checked> 連続する空行を1つに</label>
+        <label class="option-item"><input type="checkbox" id="optRemoveBlankLines"> 空行を全て削除</label>
+        <label class="option-item"><input type="checkbox" id="optTabs" checked> タブをスペースに変換</label>
+        <label class="option-item"><input type="checkbox" id="optFullWidth"> 全角スペースを半角に変換</label>
+        <label class="option-item"><input type="checkbox" id="optNbsp" checked> ノーブレークスペース(NBSP)を半角に</label>
+        <label class="option-item"><input type="checkbox" id="optInvisibles" checked> 不可視文字(ZWSP/BOM等)を削除</label>
+        <label class="option-item"><input type="checkbox" id="optTrimAll" checked> 全体の前後の空白を削除</label>
+      </div>
+    </div>
+
+    <div class="button-row">
+      <button class="primary" id="processBtn" type="button">▶ 不要なスペースを削除</button>
+      <button id="copyBtn" type="button">📋 結果をコピー</button>
+      <button id="clearBtn" type="button">✕ クリア</button>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">結果</div>
+      <textarea id="output" readonly placeholder="ここに結果が表示されます..." spellcheck="false"></textarea>
+      <div class="stats">
+        <span><span class="label">文字数:</span> <span class="num" id="outputChars">0</span></span>
+        <span><span class="label">行数:</span> <span class="num" id="outputLines">0</span></span>
+        <span><span class="label">削減:</span> <span class="num" id="diffChars">0</span> 文字</span>
+      </div>
+    </div>
+
+    <hr class="hr-retro">
+
+    <div class="panel" style="font-size: 12px; color: #999999;">
+      <div class="panel-title">使い方</div>
+      <p>1. 上の入力欄にテキストを貼り付けます。</p>
+      <p>2. 削除したいルールにチェックを入れます（デフォルトでよく使う項目が選択済み）。</p>
+      <p>3. 「不要なスペースを削除」ボタンを押すと結果が下に出ます。</p>
+      <p>4. 「結果をコピー」ボタンでクリップボードへコピーできます。</p>
+      <p style="margin-top: 6px; color: #888;">※「共通インデント(オフセット)を削除」は、文章全体が一律にインデントされている場合に、その共通分だけを取り除きます（相対的な字下げは維持されます）。</p>
+    </div>
+
+  </div>
+
+  <div class="toast" id="toast">コピーしました！</div>
+
+  <footer>
+    &copy; 2026 system8bit. All Rights Reserved.<br>
+    <a href="https://system8bit.github.io/">&lt;&lt; back to Homepage</a>
+  </footer>
+
+  <script>
+    (function () {
+      const $ = (id) => document.getElementById(id);
+      const input = $('input');
+      const output = $('output');
+
+      // 空白扱いする文字: 半角SP / TAB / 全角SP / NBSP
+      const WS_CLASS = '[ \\t\\u3000\\u00A0]';
+      const reTrailing = new RegExp(WS_CLASS + '+$');
+      const reLeading = new RegExp('^' + WS_CLASS + '*');
+      const reCollapseInline = new RegExp(WS_CLASS + '+', 'g');
+
+      function countLines(text) {
+        if (text.length === 0) return 0;
+        return text.split('\n').length;
+      }
+
+      function updateInputStats() {
+        $('inputChars').textContent = input.value.length;
+        $('inputLines').textContent = countLines(input.value);
+      }
+
+      function updateOutputStats() {
+        const outLen = output.value.length;
+        $('outputChars').textContent = outLen;
+        $('outputLines').textContent = countLines(output.value);
+        const diff = input.value.length - outLen;
+        $('diffChars').textContent = diff;
+      }
+
+      function showToast(msg) {
+        const t = $('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        clearTimeout(showToast._timer);
+        showToast._timer = setTimeout(() => t.classList.remove('show'), 1500);
+      }
+
+      function process() {
+        let text = input.value;
+
+        if ($('optInvisibles').checked) {
+          // ZWSP, ZWNJ, ZWJ, WORD JOINER, BOM
+          text = text.replace(/[​-‍⁠﻿]/g, '');
+        }
+
+        if ($('optNbsp').checked) {
+          text = text.replace(/ /g, ' ');
+        }
+
+        if ($('optFullWidth').checked) {
+          text = text.replace(/　/g, ' ');
+        }
+
+        if ($('optTabs').checked) {
+          text = text.replace(/\t/g, ' ');
+        }
+
+        if ($('optTrailing').checked) {
+          text = text.split('\n').map((line) => line.replace(reTrailing, '')).join('\n');
+        }
+
+        if ($('optDedent').checked) {
+          // 非空行に共通する先頭の空白プレフィックスを求めて、その分だけ各行から削除する
+          // （連続空白の圧縮より前に行うことで、相対的なインデントを保持する）
+          const lines = text.split('\n');
+          const nonEmpty = lines.filter((l) => l.trim().length > 0);
+          if (nonEmpty.length > 0) {
+            const leads = nonEmpty.map((l) => (l.match(reLeading) || [''])[0]);
+            let common = leads[0];
+            for (let i = 1; i < leads.length; i++) {
+              const a = common, b = leads[i];
+              let j = 0;
+              const max = Math.min(a.length, b.length);
+              while (j < max && a.charCodeAt(j) === b.charCodeAt(j)) j++;
+              common = a.slice(0, j);
+              if (common.length === 0) break;
+            }
+            if (common.length > 0) {
+              text = lines.map((l) => l.startsWith(common) ? l.slice(common.length) : l).join('\n');
+            }
+          }
+        }
+
+        if ($('optCollapseSpaces').checked) {
+          // 行頭の空白はそのまま残し、それ以降の連続空白だけを1つに圧縮する
+          // （dedent 後に残った相対インデントを保持するため）
+          text = text.split('\n').map((line) => {
+            const m = line.match(reLeading);
+            const lead = m ? m[0] : '';
+            return lead + line.slice(lead.length).replace(reCollapseInline, ' ');
+          }).join('\n');
+        }
+
+        if ($('optRemoveBlankLines').checked) {
+          text = text.split('\n').filter((line) => line.trim().length > 0).join('\n');
+        } else if ($('optCollapseBlankLines').checked) {
+          text = text.replace(/(?:[ \t]*\r?\n){2,}/g, '\n\n');
+        }
+
+        if ($('optTrimAll').checked) {
+          text = text.trim();
+        }
+
+        output.value = text;
+        updateOutputStats();
+      }
+
+      $('processBtn').addEventListener('click', process);
+
+      $('copyBtn').addEventListener('click', async () => {
+        if (output.value.length === 0) {
+          showToast('コピーする結果がありません');
+          return;
+        }
+        try {
+          await navigator.clipboard.writeText(output.value);
+          showToast('コピーしました！');
+        } catch (e) {
+          output.select();
+          document.execCommand('copy');
+          window.getSelection().removeAllRanges();
+          showToast('コピーしました！');
+        }
+      });
+
+      $('clearBtn').addEventListener('click', () => {
+        input.value = '';
+        output.value = '';
+        updateInputStats();
+        updateOutputStats();
+        input.focus();
+      });
+
+      input.addEventListener('input', updateInputStats);
+
+      input.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+          e.preventDefault();
+          process();
+        }
+      });
+
+      updateInputStats();
+      updateOutputStats();
+    })();
+  </script>
+
+</body>
+</html>
